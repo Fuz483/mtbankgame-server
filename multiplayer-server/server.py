@@ -2,7 +2,6 @@ import asyncio
 import websockets
 import json
 import math
-import os
 
 # Константы наград по местам
 REWARDS = {1: 25, 2: 18, 3: 15, 4: 12, 5: 10, 6: 8, 7: 6, 8: 4}
@@ -98,16 +97,9 @@ async def handler(websocket, path):
                 del room.players[websocket]
 
 
-async def main():
-    # Railway динамически выдает порт, поэтому мы должны брать его из настроек системы.
-    # Если мы запускаем на компьютере, он возьмет порт 8080.
-    port = int(os.environ.get("PORT", 8080))
-    print(f"Multiplayer Server Started on port {port}...")
-    
-    # Правильный современный запуск WebSocket сервера
-    async with websockets.serve(handler, "0.0.0.0", port):
-        await asyncio.Future()  # Заставляет сервер работать вечно
+start_server = websockets.serve(handler, "0.0.0.0", 8080)
 
 if __name__ == "__main__":
-    # asyncio.run() сам создает и управляет "событийным циклом"
-    asyncio.run(main())
+    print("Multiplayer Server Started on port 8080...")
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
